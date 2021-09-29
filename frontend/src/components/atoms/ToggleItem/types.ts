@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Block, Text } from "styles/themes/types";
+import { BlockTheme, TextTheme } from "styles/themes/types";
 
 export type ToggleItemContainerProps = {
 	children: ReactNode;
@@ -11,8 +11,8 @@ export type ToggleItemContainerProps = {
 export const ToggleItemThemeSymbol = Symbol("ToggleItemTheme");
 
 export type ToggleItemTheme = {
-	block?: Block;
-	text?: Text;
+	block?: BlockTheme;
+	text?: TextTheme;
 };
 
 declare module "styled-components" {

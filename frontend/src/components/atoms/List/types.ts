@@ -1,5 +1,5 @@
 import "styled-components";
-import { Background, Block } from "../../../styles/themes/types/units";
+import { BlockTheme } from "styles/themes/types/units";
 
 export type ListContainerProps<Item> = {
 	data: Item[];
@@ -10,7 +10,7 @@ export type ListContainerProps<Item> = {
 export const ListThemeSymbol = Symbol("ListTheme");
 
 export type ListTheme = {
-	block?: Block;
+	block?: BlockTheme;
 };
 
 declare module "styled-components" {

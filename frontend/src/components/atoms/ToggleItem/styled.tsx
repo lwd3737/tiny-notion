@@ -10,6 +10,7 @@ import {
 import { PaletteThemeSymbol } from "styles/themes/types";
 import { ToggleItemThemeSymbol } from "./types";
 import defaultToggleItemTheme from "./theme";
+import { HoverStyle } from "styles/styled";
 
 const SortStyle = css`
 	width: 20px;
@@ -28,7 +29,9 @@ export const ToggleItem = styled.li`
 		convertBlockThemeToCSS(
 			theme[ToggleItemThemeSymbol]?.block,
 			defaultToggleItemTheme.block,
-		)}
+		)};
+
+	${HoverStyle}
 `;
 
 export const SortRight = styled(SortRightSVG)`

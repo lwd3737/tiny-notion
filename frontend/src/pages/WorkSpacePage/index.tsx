@@ -1,19 +1,16 @@
-import { useMemo } from "react";
-import { SideBar } from "../../components/organisms";
-import { WorkSpaceLayout } from "../../components/templates";
+import WorkSpaceLayout from "components/templates/WorkSpaceLayout";
+import { PageHeader } from "components/organisms/PageHeader";
+import { SideBar } from "components/organisms";
+import { PageFrame } from "components/organisms/PageFrame";
 
 type WorkSpacePageProps = {};
 
 const WorkSpacePage: React.VFC<WorkSpacePageProps> = ({}) => {
-	const _SideBar = useMemo(() => <SideBar />, []);
-
-	//const _Header = useMemo(() => (<Header />), [])
-
 	return (
 		<WorkSpaceLayout
-			SideBar={_SideBar}
-			Header={<>header</>}
-			Contents={<>Contents</>}
+			SideBar={<SideBar />}
+			Header={<PageHeader />}
+			Contents={<PageFrame />}
 		/>
 	);
 };

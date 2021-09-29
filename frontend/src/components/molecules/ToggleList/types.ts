@@ -1,4 +1,4 @@
-import { Block } from "styles/themes/types";
+import { BlockTheme } from "styles/themes/types";
 
 export type ToggleListContainerProps = {
 	data: any[];
@@ -10,7 +10,7 @@ export const ToggleListThemeSymbol = Symbol("ToggleListTheme");
 
 export type ToggleListTheme = {
 	item?: {
-		block?: Block;
+		block?: BlockTheme;
 	};
 };
 

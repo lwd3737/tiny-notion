@@ -20,7 +20,7 @@ export type BorderTheme = {
 	style?: string;
 };
 
-export type Block = {
+export type BlockTheme = {
 	width?: Length | ContentSizeTheme;
 	height?: Length | ContentSizeTheme;
 	border?: BorderTheme;
@@ -34,7 +34,7 @@ export type Background = {
 	color?: Color;
 };
 
-export type Text = {
+export type TextTheme = {
 	size?: Length;
 	color?: Color;
 	weight?: number | string;

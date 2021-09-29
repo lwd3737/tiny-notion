@@ -1,10 +1,10 @@
 import { css } from "styled-components";
 import {
-	Block,
+	BlockTheme,
 	Color,
-	Text,
 	Length,
 	Side,
+	TextTheme,
 	BorderTheme,
 	ContentSizeTheme,
 	MinMaxLength,
@@ -111,8 +111,8 @@ export const convertBorderThemeToCSS = (
 };
 
 export const convertBlockThemeToCSS = (
-	blockTheme: Block | undefined,
-	defaultBlockTheme?: Block,
+	blockTheme?: BlockTheme,
+	defaultBlockTheme?: BlockTheme,
 ): ReturnType<typeof css> => {
 	const width = blockTheme?.width ?? defaultBlockTheme?.width;
 	const height = blockTheme?.height ?? defaultBlockTheme?.height;
@@ -130,11 +130,13 @@ export const convertBlockThemeToCSS = (
 };
 
 export const convertTextThemeToCSS = (
-	textTheme: Text | undefined,
-	defaultTextTheme?: Text,
+	textTheme?: TextTheme,
+	defaultTextTheme?: TextTheme,
 ): ReturnType<typeof css> => {
-	const size = textTheme?.size ?? defaultTextTheme?.size;
-	const color = textTheme?.color ?? defaultTextTheme?.color;
+	const size = convertLengthToString(textTheme?.size ?? defaultTextTheme?.size);
+	const color = convertColorToString(
+		textTheme?.color ?? defaultTextTheme?.color,
+	);
 	const weight = textTheme?.weight ?? defaultTextTheme?.weight;
 
 	return css`
