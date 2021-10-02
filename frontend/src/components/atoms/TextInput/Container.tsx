@@ -34,20 +34,20 @@ const TextInputContainer = ({
 	);
 
 	useEffect(() => {
-		const focus = () => {
+		const onFocus = () => {
 			if (isFocused && ref && ref.current) {
 				ref.current.focus();
 			}
 		};
 
-		focus();
+		onFocus();
 	}, [isFocused]);
 
 	return (
 		<S.TextInput
 			ref={ref}
 			value={value}
-			placeholder={placeHolder}
+			placeholder={isFocused ? placeHolder : ""}
 			onChange={onChange}
 			onKeyDown={onKeyDown}
 			onFocus={onFocus}

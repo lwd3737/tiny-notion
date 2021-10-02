@@ -11,5 +11,5 @@ export type BlocksContent = {
 
 export type PageContentContainerProps = {
 	isFocused: boolean;
-	onKeyDown: KeyboardEventHandler;
+	onTitleFocus: () => void;
 };

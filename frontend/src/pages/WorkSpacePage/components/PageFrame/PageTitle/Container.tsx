@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import {
+	KeyboardEventHandler,
+	memo,
+	useCallback,
+	useEffect,
+	useState,
+} from "react";
 
 import { TextInput } from "components/atoms/TextInput";
 import * as S from "./styled";
@@ -8,13 +14,22 @@ import { PageTitleContainerProps } from "./types";
 
 const PageTitleContainer = ({
 	isFocused,
-	onKeyDown,
+	onContentFocus,
 }: PageTitleContainerProps): JSX.Element => {
 	const [text, setText] = useState<string>("");
 
 	const onTextChnage = useCallback((text: string) => {
 		setText(text);
 	}, []);
+
+	const onKeyDown: KeyboardEventHandler = useCallback(
+		(e) => {
+			if (e.key === "Enter") {
+				onContentFocus();
+			}
+		},
+		[onContentFocus],
+	);
 
 	useEffect(() => {
 		const focus = () => {};
@@ -43,4 +58,4 @@ const PageTitleContainer = ({
 	);
 };
 
-export default PageTitleContainer;
+export default memo(PageTitleContainer);

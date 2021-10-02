@@ -10,10 +10,10 @@ import { v4 as uuid } from "uuid";
 import { TextBlock } from "components/molecules/TextBlock";
 import * as S from "./styled";
 import { Block, BlocksContent, PageContentContainerProps } from "./types";
-import {} from "components/atoms/TextInput";
 
 const PageContentContainer = ({
 	isFocused,
+	onTitleFocus,
 }: PageContentContainerProps): JSX.Element => {
 	const [blocks, setBlocks] = useState<Block[] | null>(null);
 	const [blocksContent, setBlocksContent] = useState<BlocksContent | null>(
@@ -63,19 +63,32 @@ const PageContentContainer = ({
 
 			if (blocksContent[id] !== undefined && blocksContent[id].length === 0) {
 				const prevFocusedIndex = focusedBlockIndex - 1;
-				const newBlocks = blocks.slice();
-				const newBlocksContent = Object.assign({}, blocksContent);
+				let prevBlocks: Block[] | null = blocks.slice();
+				let prevBlocksContent: BlocksContent | null = Object.assign(
+					{},
+					blocksContent,
+				);
 
-				delete newBlocksContent[id];
+				delete prevBlocksContent[id];
+				prevBlocks.splice(focusedBlockIndex, 1);
 
-				newBlocks.splice(focusedBlockIndex, 1);
+				if (prevBlocks.length === 0) {
+					prevBlocks = null;
+					prevBlocksContent = null;
+				}
 
-				setBlocks(newBlocks);
-				setFocusedBlockIndex(prevFocusedIndex);
-				setBlocksContent(newBlocksContent);
+				setBlocks(prevBlocks);
+				setBlocksContent(prevBlocksContent);
+
+				if (prevFocusedIndex < 0) {
+					setFocusedBlockIndex(null);
+					onTitleFocus();
+				} else {
+					setFocusedBlockIndex(prevFocusedIndex);
+				}
 			}
 		}
-	}, [blocks, blocksContent, focusedBlockIndex]);
+	}, [blocks, blocksContent, focusedBlockIndex, onTitleFocus]);
 
 	const onBlockKeyDown: KeyboardEventHandler = useCallback(
 		(e) => {
@@ -108,7 +121,7 @@ const PageContentContainer = ({
 	);
 
 	useEffect(() => {
-		const onContentFocus = () => {
+		const onFocus = () => {
 			if (!isFocused) return;
 
 			if (blocks === null) {
@@ -126,7 +139,7 @@ const PageContentContainer = ({
 			}
 		};
 
-		onContentFocus();
+		onFocus();
 	}, [blocks, isFocused]);
 
 	return <S.PageContent>{blocks && blocks.map(renderBlock)}</S.PageContent>;
