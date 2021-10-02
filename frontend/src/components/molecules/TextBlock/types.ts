@@ -1,4 +1,8 @@
-import { FocusEventHandler, KeyboardEventHandler } from "react";
+import {
+	FocusEventHandler,
+	KeyboardEventHandler,
+	MouseEventHandler,
+} from "react";
 
 export type TextBlockContainerProps = {
 	text: string;
@@ -6,4 +10,5 @@ export type TextBlockContainerProps = {
 	onKeyDown: KeyboardEventHandler;
 	onTextChange: (text: string) => void;
 	onFocus?: FocusEventHandler;
+	onClick: MouseEventHandler;
 };

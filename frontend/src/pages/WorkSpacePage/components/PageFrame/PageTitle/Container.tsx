@@ -15,6 +15,7 @@ import { PageTitleContainerProps } from "./types";
 const PageTitleContainer = ({
 	isFocused,
 	onContentFocus,
+	onClick,
 }: PageTitleContainerProps): JSX.Element => {
 	const [text, setText] = useState<string>("");
 
@@ -52,6 +53,7 @@ const PageTitleContainer = ({
 					placeHolder="제목 없음"
 					onTextChange={onTextChnage}
 					onKeyDown={onKeyDown}
+					onClick={onClick}
 				/>
 			</S.PageTitle>
 		</ThemeProvider>

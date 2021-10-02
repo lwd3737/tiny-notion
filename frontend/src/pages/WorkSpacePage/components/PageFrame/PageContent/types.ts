@@ -1,4 +1,4 @@
-import { KeyboardEventHandler } from "react";
+import { MouseEventHandler } from "react";
 
 export type Block = {
 	id: string;
@@ -12,4 +12,5 @@ export type BlocksContent = {
 export type PageContentContainerProps = {
 	isFocused: boolean;
 	onTitleFocus: () => void;
+	onBlockClick: () => void;
 };

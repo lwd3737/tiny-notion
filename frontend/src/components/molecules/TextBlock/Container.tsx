@@ -8,6 +8,7 @@ const TextBlockContainer = ({
 	onKeyDown,
 	onTextChange,
 	onFocus,
+	onClick,
 }: TextBlockContainerProps): JSX.Element => {
 	return (
 		<Block>
@@ -18,6 +19,7 @@ const TextBlockContainer = ({
 				onKeyDown={onKeyDown}
 				onTextChange={onTextChange}
 				onFocus={onFocus}
+				onClick={onClick}
 			/>
 		</Block>
 	);

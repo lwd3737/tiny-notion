@@ -10,6 +10,7 @@ const TextInputContainer = ({
 	onTextChange,
 	onKeyDown,
 	onFocus,
+	onClick,
 }: TextInputContainerProps) => {
 	let ref = useRef<HTMLInputElement>(null);
 
@@ -33,14 +34,16 @@ const TextInputContainer = ({
 		[autoSize, onTextChange],
 	);
 
+	const _onClick = useCallback(() => {}, []);
+
 	useEffect(() => {
-		const onFocus = () => {
+		const triggerFocus = () => {
 			if (isFocused && ref && ref.current) {
 				ref.current.focus();
 			}
 		};
 
-		onFocus();
+		triggerFocus();
 	}, [isFocused]);
 
 	return (
@@ -51,6 +54,7 @@ const TextInputContainer = ({
 			onChange={onChange}
 			onKeyDown={onKeyDown}
 			onFocus={onFocus}
+			onClick={onClick}
 		/>
 	);
 };

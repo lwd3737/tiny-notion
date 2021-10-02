@@ -14,6 +14,7 @@ import { Block, BlocksContent, PageContentContainerProps } from "./types";
 const PageContentContainer = ({
 	isFocused,
 	onTitleFocus,
+	onBlockClick,
 }: PageContentContainerProps): JSX.Element => {
 	const [blocks, setBlocks] = useState<Block[] | null>(null);
 	const [blocksContent, setBlocksContent] = useState<BlocksContent | null>(
@@ -103,6 +104,14 @@ const PageContentContainer = ({
 		[onEnterKeyDown, onBackspaceKeyDown],
 	);
 
+	const _onBlockClick = useCallback(
+		(index: number) => {
+			onBlockClick();
+			setFocusedBlockIndex(index);
+		},
+		[onBlockClick],
+	);
+
 	const renderBlock = useCallback(
 		(block: Block, index: number) => {
 			if (block.type === "text") {
@@ -113,11 +122,18 @@ const PageContentContainer = ({
 						text={blocksContent && blocksContent[block.id]}
 						onKeyDown={onBlockKeyDown}
 						onTextChange={(text) => onTextBlockChange(block.id, text)}
+						onClick={() => _onBlockClick(index)}
 					/>
 				);
 			}
 		},
-		[blocksContent, focusedBlockIndex, onTextBlockChange, onBlockKeyDown],
+		[
+			blocksContent,
+			focusedBlockIndex,
+			onTextBlockChange,
+			onBlockKeyDown,
+			_onBlockClick,
+		],
 	);
 
 	useEffect(() => {
@@ -141,6 +157,16 @@ const PageContentContainer = ({
 
 		onFocus();
 	}, [blocks, isFocused]);
+
+	useEffect(() => {
+		const onBlur = () => {
+			if (isFocused) return;
+
+			setFocusedBlockIndex(null);
+		};
+
+		onBlur();
+	}, [isFocused]);
 
 	return <S.PageContent>{blocks && blocks.map(renderBlock)}</S.PageContent>;
 };

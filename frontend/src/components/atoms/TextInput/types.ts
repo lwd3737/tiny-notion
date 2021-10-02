@@ -1,5 +1,9 @@
 import "styled-components";
-import { FocusEventHandler, KeyboardEventHandler } from "react";
+import {
+	FocusEventHandler,
+	KeyboardEventHandler,
+	MouseEventHandler,
+} from "react";
 import { TextTheme } from "styles/themes/types";
 
 export type TextInputContainerProps = {
@@ -9,6 +13,7 @@ export type TextInputContainerProps = {
 	onTextChange: (text: string) => void;
 	onKeyDown: KeyboardEventHandler;
 	onFocus?: FocusEventHandler;
+	onClick: MouseEventHandler;
 };
 
 //theme
