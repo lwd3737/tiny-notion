@@ -1,3 +1,4 @@
+import { InputEvent } from "components/atoms/TextInput";
 import {
 	FocusEventHandler,
 	KeyboardEventHandler,
@@ -5,10 +6,10 @@ import {
 } from "react";
 
 export type TextBlockContainerProps = {
-	text: string;
+	value: string;
 	isFocused: boolean;
 	onKeyDown: KeyboardEventHandler;
-	onTextChange: (text: string) => void;
+	onInput: (e: InputEvent) => void;
 	onFocus?: FocusEventHandler;
 	onClick: MouseEventHandler;
 };

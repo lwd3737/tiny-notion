@@ -1,14 +1,17 @@
 import defaultPaletteTheme from "styles/themes/palette";
 import { TextInputTheme } from "./types";
 
+const { colors, sizes } = defaultPaletteTheme;
+
 const defaultTextInputTheme: TextInputTheme = {
 	content: {
 		text: {
-			color: defaultPaletteTheme.colors?.text?.normal,
+			color: colors?.text?.normal,
+			size: sizes.text.normal,
 		},
 	},
 	placeHolder: {
-		color: defaultPaletteTheme.colors?.placeHolder.block,
+		color: colors?.placeHolder?.content,
 	},
 };
 

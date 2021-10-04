@@ -3,10 +3,10 @@ import { TextBlockContainerProps } from "./types";
 import { TextInput } from "components/atoms/TextInput";
 
 const TextBlockContainer = ({
-	text,
+	value,
 	isFocused,
 	onKeyDown,
-	onTextChange,
+	onInput,
 	onFocus,
 	onClick,
 }: TextBlockContainerProps): JSX.Element => {
@@ -14,10 +14,10 @@ const TextBlockContainer = ({
 		<Block>
 			<TextInput
 				isFocused={isFocused}
-				value={text}
+				value={value}
 				placeHolder={`명령어 사용 시 "/"를 입력하세요`}
 				onKeyDown={onKeyDown}
-				onTextChange={onTextChange}
+				onInput={onInput}
 				onFocus={onFocus}
 				onClick={onClick}
 			/>

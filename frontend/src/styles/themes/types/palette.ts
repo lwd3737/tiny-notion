@@ -17,7 +17,7 @@ export type PaletteTheme = {
 		hover?: Color;
 		placeHolder: {
 			title?: Color;
-			block?: Color;
+			content?: Color;
 		};
 	};
 	sizes?: {
@@ -26,6 +26,32 @@ export type PaletteTheme = {
 			h1?: Length;
 			h2?: Length;
 			h3?: Length;
+		};
+	};
+};
+
+export type RequiredPaletteTheme = {
+	colors: {
+		background: {
+			light: Color;
+		};
+		icon: Color;
+		text: {
+			normal: Color;
+			sideBar: Color;
+		};
+		hover: Color;
+		placeHolder: {
+			title: Color;
+			content: Color;
+		};
+	};
+	sizes: {
+		text: {
+			normal: Length;
+			h1: Length;
+			// h2: Length;
+			// h3: Length;
 		};
 	};
 };

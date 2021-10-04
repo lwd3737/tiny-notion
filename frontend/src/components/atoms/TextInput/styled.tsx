@@ -3,7 +3,7 @@ import { convertTextThemeToCSS } from "utils/themeUtils";
 import defaultTextInputTheme from "./theme";
 import { TextInputThemeSymbol } from "./types";
 
-export const TextInput = styled.input`
+export const TextInput = styled.div`
 	resize: none;
 	border: none;
 	width: 100%;

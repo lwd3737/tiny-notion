@@ -1,10 +1,4 @@
-import {
-	KeyboardEventHandler,
-	memo,
-	useCallback,
-	useEffect,
-	useState,
-} from "react";
+import { memo } from "react";
 
 import { TextInput } from "components/atoms/TextInput";
 import * as S from "./styled";
@@ -14,30 +8,11 @@ import { PageTitleContainerProps } from "./types";
 
 const PageTitleContainer = ({
 	isFocused,
-	onContentFocus,
+	title,
+	onInput,
+	onKeyDown,
 	onClick,
 }: PageTitleContainerProps): JSX.Element => {
-	const [text, setText] = useState<string>("");
-
-	const onTextChnage = useCallback((text: string) => {
-		setText(text);
-	}, []);
-
-	const onKeyDown: KeyboardEventHandler = useCallback(
-		(e) => {
-			if (e.key === "Enter") {
-				onContentFocus();
-			}
-		},
-		[onContentFocus],
-	);
-
-	useEffect(() => {
-		const focus = () => {};
-
-		focus();
-	}, [isFocused]);
-
 	return (
 		<ThemeProvider
 			theme={(theme: DefaultTheme) => ({
@@ -49,9 +24,9 @@ const PageTitleContainer = ({
 				<S.PageControls>controls</S.PageControls>
 				<TextInput
 					isFocused={isFocused}
-					value={text}
+					value={title}
 					placeHolder="제목 없음"
-					onTextChange={onTextChnage}
+					onInput={onInput}
 					onKeyDown={onKeyDown}
 					onClick={onClick}
 				/>
