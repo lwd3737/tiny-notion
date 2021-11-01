@@ -1,5 +1,4 @@
-import { memo, useCallback, useEffect, useRef } from "react";
-import { InputEvent } from ".";
+import { memo, useEffect, useRef } from "react";
 
 import * as S from "./styled";
 import { TextInputContainerProps } from "./types";
@@ -7,30 +6,13 @@ import { TextInputContainerProps } from "./types";
 const TextInputContainer = ({
 	isFocused,
 	value,
-	placeHolder,
-	onInput,
+	placeholder,
+	onKeyUp,
 	onKeyDown,
 	onFocus,
 	onClick,
 }: TextInputContainerProps) => {
 	let ref = useRef<HTMLDivElement>(null);
-
-	const autoSize = useCallback(() => {
-		if (ref && ref.current) {
-			const $el = ref.current;
-
-			$el.style.height = "auto";
-			$el.style.height = `${$el.scrollHeight}px`;
-		}
-	}, []);
-
-	const _onInput = useCallback(
-		(e: InputEvent) => {
-			onInput(e);
-			autoSize();
-		},
-		[autoSize, onInput],
-	);
 
 	useEffect(() => {
 		const triggerFocus = () => {
@@ -45,16 +27,16 @@ const TextInputContainer = ({
 	return (
 		<S.TextInput
 			ref={ref}
-			placeholder={isFocused ? placeHolder : ""}
-			onInput={_onInput}
+			isPlaceholderShown={value === null && isFocused}
+			placeholder={placeholder}
+			onKeyUp={onKeyUp}
 			onKeyDown={onKeyDown}
 			onFocus={onFocus}
 			onClick={onClick}
+			data-content-editable-leaf={true}
 			contentEditable
 			suppressContentEditableWarning
-		>
-			{value}
-		</S.TextInput>
+		></S.TextInput>
 	);
 };
 

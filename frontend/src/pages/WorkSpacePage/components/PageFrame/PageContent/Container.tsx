@@ -2,7 +2,6 @@ import { memo, useCallback, useEffect } from "react";
 
 import { TextBlock } from "components/molecules/TextBlock";
 import { BlockMeta, PageContentContainerProps } from "./types";
-import { InputEvent } from "components/atoms/TextInput";
 import * as S from "./styled";
 
 const PageContentContainer = ({
@@ -12,20 +11,23 @@ const PageContentContainer = ({
 	focusedBlockIndex,
 	onContentFocus,
 	onContentBlur,
+	onBlockKeyUp,
 	onBlockKeyDown,
 	onBlockClick,
-	onTextBlockInput,
 }: PageContentContainerProps): JSX.Element => {
 	const renderBlock = useCallback(
-		(block: BlockMeta, index: number) => {
-			if (block.type === "text") {
+		(blockMeta: BlockMeta, index: number) => {
+			const { id } = blockMeta;
+
+			if (blockMeta.type === "text") {
 				return (
 					<TextBlock
+						id={id}
 						isFocused={focusedBlockIndex === index}
-						key={block.id}
-						value={blocksContent && blocksContent[block.id]}
+						key={id}
+						value={blocksContent && blocksContent[id]}
+						onKeyUp={(e) => onBlockKeyUp(e, id)}
 						onKeyDown={onBlockKeyDown}
-						onInput={(e: InputEvent) => onTextBlockInput(e, block.id)}
 						onClick={() => onBlockClick(index)}
 					/>
 				);
@@ -34,7 +36,7 @@ const PageContentContainer = ({
 		[
 			blocksContent,
 			focusedBlockIndex,
-			onTextBlockInput,
+			onBlockKeyUp,
 			onBlockKeyDown,
 			onBlockClick,
 		],

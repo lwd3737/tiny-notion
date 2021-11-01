@@ -1,5 +1,4 @@
-import { InputEvent } from "components/atoms/TextInput";
-import { KeyboardEventHandler } from "react";
+import { KeyboardEvent } from "react";
 
 export type PageContentContainerProps = {
 	isFocused: boolean;
@@ -8,15 +7,16 @@ export type PageContentContainerProps = {
 	focusedBlockIndex: number | null;
 	onContentFocus: () => void;
 	onContentBlur: () => void;
-	onBlockKeyDown: KeyboardEventHandler;
+	onBlockKeyUp: (e: KeyboardEvent, id: string) => void;
+	onBlockKeyDown: (e: KeyboardEvent) => void;
 	onBlockClick: (index: number) => void;
-	onTextBlockInput: (e: InputEvent, id: string) => void;
 };
 
 export type BlockType = "text" | "toggle" | "todo";
 
 export type BlockMeta = {
 	id: string;
+	index: number;
 	type: BlockType;
 };
 

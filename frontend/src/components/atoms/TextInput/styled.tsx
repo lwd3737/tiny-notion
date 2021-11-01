@@ -1,13 +1,14 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { convertTextThemeToCSS } from "utils/themeUtils";
 import defaultTextInputTheme from "./theme";
 import { TextInputThemeSymbol } from "./types";
 
-export const TextInput = styled.div`
-	resize: none;
-	border: none;
+export const TextInput = styled.div<{
+	isPlaceholderShown: boolean;
+	placeholder: string;
+}>`
+	display: inline-block;
 	width: 100%;
-	height: fit-content;
 
 	${({ theme }) =>
 		convertTextThemeToCSS(
@@ -19,15 +20,24 @@ export const TextInput = styled.div`
 		outline: none;
 	}
 
-	&::placeholder {
-		${({ theme }) =>
-			convertTextThemeToCSS(
-				theme[TextInputThemeSymbol]?.placeHolder,
-				defaultTextInputTheme?.placeHolder,
-			)};
+	${({ isPlaceholderShown, placeholder }) =>
+		isPlaceholderShown &&
+		css`
+			&::before {
+				content: ${placeholder};
+			}
+		`};
+
+	& div,
+	& br {
+		display: none;
 	}
 `;
 
-export const Text = styled.p``;
-
-export const PlaceHolder = styled.div``;
+export const PlaceHolder = styled.div`
+	${({ theme }) =>
+		convertTextThemeToCSS(
+			theme[TextInputThemeSymbol]?.placeHolder,
+			defaultTextInputTheme?.placeHolder,
+		)};
+`;

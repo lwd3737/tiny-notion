@@ -9,7 +9,7 @@ import { PageTitleContainerProps } from "./types";
 const PageTitleContainer = ({
 	isFocused,
 	title,
-	onInput,
+	onKeyUp,
 	onKeyDown,
 	onClick,
 }: PageTitleContainerProps): JSX.Element => {
@@ -25,8 +25,8 @@ const PageTitleContainer = ({
 				<TextInput
 					isFocused={isFocused}
 					value={title}
-					placeHolder="제목 없음"
-					onInput={onInput}
+					placeholder="제목 없음"
+					onKeyUp={onKeyUp}
 					onKeyDown={onKeyDown}
 					onClick={onClick}
 				/>

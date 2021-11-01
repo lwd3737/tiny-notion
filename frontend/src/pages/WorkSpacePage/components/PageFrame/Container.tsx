@@ -1,10 +1,7 @@
-import { InputEvent, TextInputElement } from "components/atoms/TextInput";
-import {
-	ChangeEvent,
-	KeyboardEventHandler,
-	useCallback,
-	useState,
-} from "react";
+import { TextInputElement } from "components/atoms/TextInput";
+import { sanitizeHTML } from "components/atoms/TextInput/utils";
+import { getBlockContentEditableLeafById } from "components/molecules/TextBlock/utils";
+import { KeyboardEvent, useCallback, useState } from "react";
 import { v4 as uuid } from "uuid";
 
 import { PageContent } from "./PageContent";
@@ -16,6 +13,7 @@ const PageFrameContainer = () => {
 	const [focusedTarget, setFocusedTarget] = useState<
 		"title" | "content" | null
 	>(null);
+	const [caretPos, setCaretPos] = useState<number | null>(null);
 
 	const [title, setTitle] = useState<string | null>(null);
 
@@ -27,85 +25,256 @@ const PageFrameContainer = () => {
 		null,
 	);
 
+	const updateCaretPos = useCallback(() => {
+		const selection = document.getSelection();
+
+		if (selection === null) return;
+
+		if (selection.type === "Caret") {
+			const { focusOffset } = selection;
+
+			setCaretPos(focusOffset);
+		}
+	}, []);
+
 	const createBlock = useCallback(
-		(
-			type: BlockType,
-			prevBlocksMeta: BlockMeta[] | null,
-			focusedBlockIndex: number,
-		) => {
+		({
+			type,
+			prevBlocksMeta,
+			nextFocusedBlockIndex,
+			content,
+		}: {
+			type: BlockType;
+			prevBlocksMeta: BlockMeta[] | null;
+			nextFocusedBlockIndex: number;
+			content?: any;
+		}) => {
 			const id = uuid();
 			const nextBlocksMeta = prevBlocksMeta?.slice() ?? [];
-			let content;
 
-			if (type === "text") {
-				content = "";
+			const updateContentEditableEl = (id: string, content: string) => {
+				const $contentEditableLeaf = getBlockContentEditableLeafById(id);
+
+				if ($contentEditableLeaf === null) return;
+
+				$contentEditableLeaf.innerHTML = content;
+			};
+
+			if (content === undefined) {
+				if (type === "text") {
+					content = "";
+				}
 			}
 
-			nextBlocksMeta.splice(focusedBlockIndex, 0, {
+			nextBlocksMeta.splice(nextFocusedBlockIndex, 0, {
 				id,
+				index: nextFocusedBlockIndex,
 				type,
 			});
+
 			setBlocksMeta(nextBlocksMeta);
-			setFocusedBlockIndex(focusedBlockIndex);
+			setFocusedBlockIndex(nextFocusedBlockIndex);
 			setBlocksContent({
 				...blocksContent,
 				[id]: content,
 			});
+
+			setTimeout(() => {
+				updateContentEditableEl(id, content);
+			}, 0);
 		},
 		[blocksContent],
 	);
 
-	const onTitleInput = useCallback((e: InputEvent) => {
-		const { innerText } = e.target as TextInputElement;
-
-		setTitle(innerText);
-	}, []);
+	//title
 
 	const onTitleClick = useCallback((e) => {
 		setFocusedTarget("title");
 	}, []);
 
-	const onTitleKeyDown: KeyboardEventHandler = useCallback(
-		(e) => {
-			if (e.key === "Enter") {
-				setFocusedTarget("content");
+	const onTitleEnterKeyUp = useCallback(() => {
+		setFocusedTarget("content");
 
-				if (blocksMeta !== null) {
-					createBlock("text", blocksMeta, 0);
-				}
-			}
+		if (blocksMeta !== null) {
+			createBlock({
+				type: "text",
+				prevBlocksMeta: blocksMeta,
+				nextFocusedBlockIndex: 0,
+			});
+		}
+	}, [blocksMeta, createBlock]);
 
-			if (e.key === "ArrowDown") {
-				if (blocksMeta && blocksMeta.length > 0) {
-					setFocusedBlockIndex(0);
-					setFocusedTarget("content");
+	const onTitleArrowDownKeyUp = useCallback(() => {
+		if (blocksMeta === null || blocksMeta.length === 0) return;
+
+		setFocusedBlockIndex(0);
+		setFocusedTarget("content");
+	}, [blocksMeta]);
+
+	const onTitleInput = useCallback(($el: TextInputElement) => {
+		setTitle($el.innerText);
+	}, []);
+
+	const onTitleEnterKeyDown = useCallback((e: KeyboardEvent) => {
+		e.preventDefault();
+	}, []);
+
+	const onTitleKeyDown = useCallback(
+		(e: KeyboardEvent) => {
+			switch (e.key) {
+				case "Enter": {
+					onTitleEnterKeyDown(e);
+					break;
 				}
 			}
 		},
-		[blocksMeta, createBlock],
+		[onTitleEnterKeyDown],
 	);
 
+	const onTitleKeyUp = useCallback(
+		(e: KeyboardEvent) => {
+			switch (e.key) {
+				case "Enter": {
+					onTitleEnterKeyUp();
+					break;
+				}
+				case "ArrowDown": {
+					onTitleArrowDownKeyUp();
+					break;
+				}
+				default: {
+					const $el = e.target as TextInputElement;
+
+					onTitleInput($el);
+				}
+			}
+		},
+		[onTitleEnterKeyUp, onTitleArrowDownKeyUp, onTitleInput],
+	);
+
+	//content
 	const onTextBlockInput = useCallback(
-		(e: InputEvent, id: string) => {
-			const { innerText } = e.target as TextInputElement;
+		(e) => {
+			if (focusedBlockIndex === null) return;
+			if (blocksMeta === null) return;
+
+			const $el = e.target as TextInputElement;
+			const html = sanitizeHTML($el.innerHTML);
+			const blockMeta = blocksMeta.find(
+				(block) => block.index === focusedBlockIndex,
+			);
+
+			if (!blockMeta) return;
 
 			setBlocksContent({
 				...blocksContent,
-				[id]: innerText,
+				[blockMeta.id]: html,
 			});
 		},
-		[blocksContent],
+		[focusedBlockIndex, blocksMeta, blocksContent],
 	);
 
-	const onBlockEnterKeyDown = useCallback(() => {
-		if (focusedBlockIndex !== null && blocksMeta !== null) {
+	const onBlockEnterKeyDown = useCallback(
+		(e: KeyboardEvent) => {
+			e.preventDefault();
+
+			if (focusedBlockIndex === null) return;
+			if (blocksMeta === null) return;
+
 			const nextFocusedBlockIndex = focusedBlockIndex + 1;
 
-			createBlock("text", blocksMeta, nextFocusedBlockIndex);
-		}
-	}, [blocksMeta, focusedBlockIndex, createBlock]);
+			const selection = document.getSelection();
+			let content;
 
-	const onBlockBackspaceKeyDown = useCallback(() => {
+			const updateCurrentBlockContent = () => {
+				const blockMeta = blocksMeta.find(
+					(meta) => meta.index === focusedBlockIndex,
+				);
+
+				if (blockMeta) {
+					const $contentEditableLeaf = getBlockContentEditableLeafById(
+						blockMeta.id,
+					);
+
+					if ($contentEditableLeaf) {
+						const value = $contentEditableLeaf.innerHTML;
+
+						setBlocksContent((blocksContent) => ({
+							...blocksContent,
+							[blockMeta.id]: value,
+						}));
+					}
+				}
+			};
+
+			if (selection) {
+				const range = selection.getRangeAt(0);
+				let { endContainer } = range;
+
+				if (endContainer.nodeType === Node.ELEMENT_NODE) {
+					const $endContainer = endContainer as HTMLElement;
+
+					if (
+						$endContainer.dataset.contentEditableLeaf === "true" &&
+						$endContainer.lastChild
+					) {
+						endContainer = $endContainer.lastChild;
+					}
+				}
+
+				const lastOffset = endContainer.textContent?.length;
+
+				if (lastOffset) {
+					console.log("end container: ", endContainer, lastOffset);
+					range.setEnd(endContainer, lastOffset);
+
+					const $content = range.extractContents().firstChild as Node;
+
+					if ($content && $content.nodeType === Node.TEXT_NODE) {
+						const $textNode = $content as Text;
+
+						content = $textNode.data;
+					}
+
+					setTimeout(() => updateCurrentBlockContent(), 0);
+				}
+			}
+
+			createBlock({
+				type: "text",
+				prevBlocksMeta: blocksMeta,
+				nextFocusedBlockIndex,
+				content,
+			});
+		},
+		[blocksMeta, focusedBlockIndex, createBlock],
+	);
+
+	const onBlockKeyDown = useCallback(
+		(e: KeyboardEvent) => {
+			switch (e.key) {
+				case "Enter":
+					onBlockEnterKeyDown(e);
+					break;
+			}
+		},
+		[onBlockEnterKeyDown],
+	);
+
+	const onBlockEnterKeyUp = useCallback((e: KeyboardEvent) => {
+		// if (focusedBlockIndex === null) return;
+		// if (blocksMeta === null) return;
+		// const $el = e.target as TextInputElement;
+		//const html = sanitizeHTML($el.innerHTML);
+		//const nextFocusedBlockIndex = focusedBlockIndex + 1;
+		// setBlocksContent({
+		// 	...blocksContent,
+		// 	[focusedBlockIndex]: html,
+		// });
+		//createBlock("text", blocksMeta, nextFocusedBlockIndex);
+	}, []);
+
+	const onBlockBackspaceKeyUp = useCallback(() => {
 		if (
 			blocksMeta !== null &&
 			blocksContent !== null &&
@@ -113,7 +282,9 @@ const PageFrameContainer = () => {
 		) {
 			const { id } = blocksMeta[focusedBlockIndex];
 			const isContentEmpty =
-				blocksContent[id] !== undefined && blocksContent[id].length === 0;
+				blocksContent[id] !== undefined &&
+				blocksContent[id] !== null &&
+				blocksContent[id].length === 0;
 
 			if (isContentEmpty) {
 				let nextBlocksMeta: BlockMeta[] | null = blocksMeta.slice();
@@ -145,7 +316,7 @@ const PageFrameContainer = () => {
 		}
 	}, [blocksMeta, blocksContent, focusedBlockIndex]);
 
-	const onBlockArrowDownKeyDown = useCallback(() => {
+	const onBlockArrowDownKeyUp = useCallback(() => {
 		if (focusedBlockIndex === null) return;
 
 		const nextFocusedBlockIndex = focusedBlockIndex + 1;
@@ -155,7 +326,7 @@ const PageFrameContainer = () => {
 		setFocusedBlockIndex(nextFocusedBlockIndex);
 	}, [blocksMeta, focusedBlockIndex]);
 
-	const onBlockArrowUpKeyDown = useCallback(() => {
+	const onBlockArrowUpKeyUp = useCallback(() => {
 		if (focusedBlockIndex === null) return;
 
 		const prevFocusedBlockIndex = focusedBlockIndex - 1;
@@ -170,36 +341,48 @@ const PageFrameContainer = () => {
 		setFocusedBlockIndex(focusedBlockIndex - 1);
 	}, [focusedBlockIndex, blocksMeta]);
 
-	const onBlockKeyDown: KeyboardEventHandler = useCallback(
-		(e) => {
-			if (e.key === "Enter") {
-				onBlockEnterKeyDown();
-			}
-
-			if (e.key === "Backspace") {
-				onBlockBackspaceKeyDown();
-			}
-
-			if (e.key === "ArrowDown") {
-				onBlockArrowDownKeyDown();
-			}
-
-			if (e.key === "ArrowUp") {
-				onBlockArrowUpKeyDown();
+	const onBlockKeyUp = useCallback(
+		(e: KeyboardEvent) => {
+			switch (e.key) {
+				case "Enter": {
+					onBlockEnterKeyUp(e);
+					break;
+				}
+				case "Backspace": {
+					onBlockBackspaceKeyUp();
+					break;
+				}
+				case "ArrowDown": {
+					onBlockArrowDownKeyUp();
+					break;
+				}
+				case "ArrowUp": {
+					onBlockArrowUpKeyUp();
+					break;
+				}
+				default: {
+					onTextBlockInput(e);
+				}
 			}
 		},
 		[
-			onBlockEnterKeyDown,
-			onBlockBackspaceKeyDown,
-			onBlockArrowDownKeyDown,
-			onBlockArrowUpKeyDown,
+			onBlockEnterKeyUp,
+			onBlockBackspaceKeyUp,
+			onBlockArrowDownKeyUp,
+			onBlockArrowUpKeyUp,
+			onTextBlockInput,
 		],
 	);
 
-	const onBlockClick = useCallback((index: number) => {
-		setFocusedTarget("content");
-		setFocusedBlockIndex(index);
-	}, []);
+	const onBlockClick = useCallback(
+		(index: number) => {
+			setFocusedTarget("content");
+			setFocusedBlockIndex(index);
+
+			updateCaretPos();
+		},
+		[updateCaretPos],
+	);
 
 	const onContentFocus = useCallback(() => {
 		const initializeContent = () => {
@@ -208,11 +391,12 @@ const PageFrameContainer = () => {
 			setBlocksMeta([
 				{
 					id,
+					index: 0,
 					type: "text",
 				},
 			]);
 			setBlocksContent({
-				[id]: "",
+				[id]: null,
 			});
 		};
 
@@ -230,7 +414,7 @@ const PageFrameContainer = () => {
 			<PageTitle
 				isFocused={focusedTarget === "title"}
 				title={title}
-				onInput={onTitleInput}
+				onKeyUp={onTitleKeyUp}
 				onKeyDown={onTitleKeyDown}
 				onClick={onTitleClick}
 			/>
@@ -241,9 +425,9 @@ const PageFrameContainer = () => {
 				focusedBlockIndex={focusedBlockIndex}
 				onContentFocus={onContentFocus}
 				onContentBlur={onContentBlur}
+				onBlockKeyUp={onBlockKeyUp}
 				onBlockKeyDown={onBlockKeyDown}
 				onBlockClick={onBlockClick}
-				onTextBlockInput={onTextBlockInput}
 			/>
 		</S.PageFrame>
 	);
