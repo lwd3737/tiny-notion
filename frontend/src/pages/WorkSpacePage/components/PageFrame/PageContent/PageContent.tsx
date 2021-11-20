@@ -1,10 +1,10 @@
 import { memo, useCallback, useEffect } from "react";
 
 import { TextBlock } from "components/molecules/TextBlock";
-import { BlockMeta, PageContentContainerProps } from "./types";
+import { BlockMeta, PageContentProps } from "./types";
 import * as S from "./styled";
 
-const PageContentContainer = ({
+const PageContent = ({
 	isFocused,
 	blocksMeta,
 	blocksContent,
@@ -14,7 +14,7 @@ const PageContentContainer = ({
 	onBlockKeyUp,
 	onBlockKeyDown,
 	onBlockClick,
-}: PageContentContainerProps): JSX.Element => {
+}: PageContentProps): JSX.Element => {
 	const renderBlock = useCallback(
 		(blockMeta: BlockMeta, index: number) => {
 			const { id } = blockMeta;
@@ -75,4 +75,4 @@ const PageContentContainer = ({
 	);
 };
 
-export default memo(PageContentContainer);
+export default memo(PageContent);

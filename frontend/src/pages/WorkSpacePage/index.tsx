@@ -1,4 +1,4 @@
-import WorkSpaceLayout from "components/templates/WorkSpaceLayout";
+import WorkSpaceLayout from "components/templates/WorkSpaceLayout/WorkSpaceLayout";
 import { PageFrame, PageHeader, SideBar } from "./components";
 
 type WorkSpacePageProps = {};

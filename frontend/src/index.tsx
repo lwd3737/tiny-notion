@@ -1,16 +1,24 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { ThemeProvider } from "styled-components";
+import { ApolloClient, ApolloProvider, gql } from "@apollo/client";
 
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { defaultTheme, GlobalStyle } from "./styles";
+import cache from "./cache";
+
+const client = new ApolloClient({
+	cache,
+});
 
 ReactDOM.render(
 	<React.StrictMode>
 		<ThemeProvider theme={defaultTheme}>
 			<GlobalStyle />
-			<App />
+			<ApolloProvider client={client}>
+				<App />
+			</ApolloProvider>
 		</ThemeProvider>
 	</React.StrictMode>,
 	document.getElementById("root"),

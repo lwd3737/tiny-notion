@@ -1,1 +1,1 @@
-export { default as PageTitle } from "./Container";
+export { default as PageTitle } from "./PageTitle";

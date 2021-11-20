@@ -1,18 +1,18 @@
 import { memo } from "react";
 
 import { TextInput } from "components/atoms/TextInput";
-import * as S from "./styled";
 import { DefaultTheme, ThemeProvider } from "styled-components";
 import { PageTitleTheme } from "./theme";
-import { PageTitleContainerProps } from "./types";
+import { PageTitleProps } from "./types";
+import * as S from "./styled";
 
-const PageTitleContainer = ({
+const PageTitle = ({
 	isFocused,
 	title,
 	onKeyUp,
 	onKeyDown,
 	onClick,
-}: PageTitleContainerProps): JSX.Element => {
+}: PageTitleProps): JSX.Element => {
 	return (
 		<ThemeProvider
 			theme={(theme: DefaultTheme) => ({
@@ -35,4 +35,4 @@ const PageTitleContainer = ({
 	);
 };
 
-export default memo(PageTitleContainer);
+export default memo(PageTitle);

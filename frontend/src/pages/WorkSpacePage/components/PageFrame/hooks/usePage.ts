@@ -4,12 +4,9 @@ import { getBlockContentEditableLeafById } from "components/molecules/TextBlock/
 import { KeyboardEvent, useCallback, useState } from "react";
 import { v4 as uuid } from "uuid";
 
-import { PageContent } from "./PageContent";
-import { BlockMeta, BlocksContent, BlockType } from "./PageContent/types";
-import { PageTitle } from "./PageTitle";
-import * as S from "./styled";
+import { BlockMeta, BlocksContent, BlockType } from "../PageContent/types";
 
-const PageFrameContainer = () => {
+const usePage = () => {
 	const [focusedTarget, setFocusedTarget] = useState<
 		"title" | "content" | null
 	>(null);
@@ -87,7 +84,6 @@ const PageFrameContainer = () => {
 	);
 
 	//title
-
 	const onTitleClick = useCallback((e) => {
 		setFocusedTarget("title");
 	}, []);
@@ -409,28 +405,26 @@ const PageFrameContainer = () => {
 		setFocusedBlockIndex(null);
 	}, []);
 
-	return (
-		<S.PageFrame>
-			<PageTitle
-				isFocused={focusedTarget === "title"}
-				title={title}
-				onKeyUp={onTitleKeyUp}
-				onKeyDown={onTitleKeyDown}
-				onClick={onTitleClick}
-			/>
-			<PageContent
-				isFocused={focusedTarget === "content"}
-				blocksMeta={blocksMeta}
-				blocksContent={blocksContent}
-				focusedBlockIndex={focusedBlockIndex}
-				onContentFocus={onContentFocus}
-				onContentBlur={onContentBlur}
-				onBlockKeyUp={onBlockKeyUp}
-				onBlockKeyDown={onBlockKeyDown}
-				onBlockClick={onBlockClick}
-			/>
-		</S.PageFrame>
-	);
+	return {
+		focusedTarget,
+
+		pageTitle: {
+			title,
+			onTitleClick,
+			onTitleKeyUp,
+			onTitleKeyDown,
+		},
+		pageContent: {
+			blocksMeta,
+			blocksContent,
+			focusedBlockIndex,
+			onContentFocus,
+			onContentBlur,
+			onBlockKeyUp,
+			onBlockKeyDown,
+			onBlockClick,
+		},
+	};
 };
 
-export default PageFrameContainer;
+export default usePage;

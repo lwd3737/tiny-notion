@@ -1,1 +1,1 @@
-export { default as WorkSpaceLayout } from "./WorkSpaceLayout";
+export { default as WorkSpaceLayout } from "./WorkSpaceLayout/WorkSpaceLayout";

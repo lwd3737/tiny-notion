@@ -1,1 +1,1 @@
-export { default as TextBlock } from "./Container";
+export { default as TextBlock } from "./TextBlock";

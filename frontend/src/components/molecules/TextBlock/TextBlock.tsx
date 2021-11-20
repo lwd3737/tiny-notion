@@ -1,8 +1,8 @@
 import { Block } from "components/atoms/Block";
-import { TextBlockContainerProps } from "./types";
+import { TextBlockProps } from "./types";
 import { TextInput } from "components/atoms/TextInput";
 
-const TextBlockContainer = ({
+const TextBlock = ({
 	id,
 	value,
 	isFocused,
@@ -10,7 +10,7 @@ const TextBlockContainer = ({
 	onKeyDown,
 	onFocus,
 	onClick,
-}: TextBlockContainerProps): JSX.Element => {
+}: TextBlockProps): JSX.Element => {
 	return (
 		<Block id={id}>
 			<TextInput
@@ -26,4 +26,4 @@ const TextBlockContainer = ({
 	);
 };
 
-export default TextBlockContainer;
+export default TextBlock;

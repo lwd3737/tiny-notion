@@ -1,6 +1,6 @@
 import { KeyboardEvent, MouseEvent } from "react";
 
-export type PageTitleContainerProps = {
+export type PageTitleProps = {
 	title: string | null;
 	isFocused: boolean;
 	onKeyUp: (e: KeyboardEvent) => void;

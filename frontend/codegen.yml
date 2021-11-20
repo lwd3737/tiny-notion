@@ -1,0 +1,25 @@
+overwrite: true
+schema: "./graphql/schemas/**/*.graphql"
+documents: "./graphql/documents/**/*.graphql"
+generates:
+  src/generated/graphql.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo
+
+  src/generated/client-helpers.ts:
+    plugins:
+      - typescript-apollo-client-helpers
+
+  src/generated/introspection.json:
+    plugins:
+      - introspection
+    config:
+      minify: true
+
+config:
+  scalars:
+    DateTime: Date
+    JSON: object
+    Upload: File

@@ -11,6 +11,7 @@ const TextInputContainer = ({
 	onKeyDown,
 	onFocus,
 	onClick,
+	...props
 }: TextInputContainerProps) => {
 	let ref = useRef<HTMLDivElement>(null);
 
@@ -36,6 +37,7 @@ const TextInputContainer = ({
 			data-content-editable-leaf={true}
 			contentEditable
 			suppressContentEditableWarning
+			{...props}
 		></S.TextInput>
 	);
 };

@@ -1,6 +1,6 @@
 import { KeyboardEvent } from "react";
 
-export type PageContentContainerProps = {
+export type PageContentProps = {
 	isFocused: boolean;
 	blocksMeta: BlockMeta[] | null;
 	blocksContent: BlocksContent | null;

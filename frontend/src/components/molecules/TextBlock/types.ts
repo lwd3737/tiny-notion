@@ -1,6 +1,6 @@
 import { FocusEventHandler, KeyboardEvent, MouseEventHandler } from "react";
 
-export type TextBlockContainerProps = {
+export type TextBlockProps = {
 	id: string;
 	value: string;
 	isFocused: boolean;

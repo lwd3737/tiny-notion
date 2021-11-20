@@ -1,8 +1,14 @@
 import "styled-components";
-import { FocusEventHandler, KeyboardEvent, MouseEventHandler } from "react";
+import {
+	DetailsHTMLAttributes,
+	FocusEventHandler,
+	KeyboardEvent,
+	MouseEventHandler,
+} from "react";
 import { TextTheme } from "styles/themes/types";
 
-export type TextInputContainerProps = {
+export interface TextInputContainerProps
+	extends DetailsHTMLAttributes<HTMLDivElement> {
 	isFocused: boolean;
 	value: string | null;
 	placeholder: string;
@@ -10,7 +16,7 @@ export type TextInputContainerProps = {
 	onKeyDown: (e: KeyboardEvent) => void;
 	onFocus?: FocusEventHandler;
 	onClick: MouseEventHandler;
-};
+}
 
 export type TextInputElement = HTMLDivElement;
 
