@@ -3,9 +3,28 @@ schema {
 }
 
 type Query {
-	test: Test
+	title: String
+	focusedSection: Section
+	blocksMeta: [BlockMeta!]
+	blockMeta(id: ID!): BlockMeta
+	focusedBlock: FocusedBlock
 }
 
-type Test {
-	text: String
+type BlockMeta {
+	id: ID!
+	type: BlockType!
+}
+
+type FocusedBlock {
+	id: ID!
+	index: Int!
+}
+
+enum Section {
+	TITLE
+	CONTENT
+}
+
+enum BlockType {
+	TEXT
 }

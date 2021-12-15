@@ -3,10 +3,6 @@ export const getBlockElById = (id: string) => {
 };
 
 export const getBlockContentEditableLeafById = (id: string) => {
-	const $el = getBlockElById(id);
-
-	if ($el === null) return null;
-
 	const $block = getBlockElById(id);
 
 	if ($block === null) return null;
@@ -18,4 +14,12 @@ export const getBlockContentEditableLeafById = (id: string) => {
 	if ($contentEditablLeaf === null) return null;
 
 	return $contentEditablLeaf as HTMLElement;
+};
+
+export const updateContentEditableEl = (id: string, content: any) => {
+	const $contentEditableLeaf = getBlockContentEditableLeafById(id);
+
+	if ($contentEditableLeaf === null) return;
+
+	$contentEditableLeaf.innerHTML = content;
 };

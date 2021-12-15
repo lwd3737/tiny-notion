@@ -1,0 +1,6 @@
+query getBlockMetaById($id: ID!) {
+	blockMeta(id: $id) @client {
+		id
+		type
+	}
+}

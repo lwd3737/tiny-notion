@@ -8,6 +8,9 @@ generates:
       - typescript-operations
       - typescript-react-apollo
 
+    config:
+      typesPrefix: I
+
   src/generated/client-helpers.ts:
     plugins:
       - typescript-apollo-client-helpers

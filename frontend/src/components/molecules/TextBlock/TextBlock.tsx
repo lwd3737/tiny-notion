@@ -1,6 +1,7 @@
 import { Block } from "components/atoms/Block";
 import { TextBlockProps } from "./types";
 import { TextInput } from "components/atoms/TextInput";
+import { memo } from "react";
 
 const TextBlock = ({
 	id,
@@ -26,4 +27,4 @@ const TextBlock = ({
 	);
 };
 
-export default TextBlock;
+export default memo(TextBlock);

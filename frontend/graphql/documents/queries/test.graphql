@@ -1,5 +1,0 @@
-query test {
-	test @client {
-		text
-	}
-}

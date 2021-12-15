@@ -5,14 +5,11 @@ import { DefaultTheme, ThemeProvider } from "styled-components";
 import { PageTitleTheme } from "./theme";
 import { PageTitleProps } from "./types";
 import * as S from "./styled";
+import { useTitle } from "./hooks";
 
-const PageTitle = ({
-	isFocused,
-	title,
-	onKeyUp,
-	onKeyDown,
-	onClick,
-}: PageTitleProps): JSX.Element => {
+const PageTitle = ({ isFocused }: PageTitleProps): JSX.Element => {
+	const { title, onTitleClick, onTitleKeyDown, onTitleKeyUp } = useTitle();
+
 	return (
 		<ThemeProvider
 			theme={(theme: DefaultTheme) => ({
@@ -26,9 +23,9 @@ const PageTitle = ({
 					isFocused={isFocused}
 					value={title}
 					placeholder="제목 없음"
-					onKeyUp={onKeyUp}
-					onKeyDown={onKeyDown}
-					onClick={onClick}
+					onKeyUp={onTitleKeyUp}
+					onKeyDown={onTitleKeyDown}
+					onClick={onTitleClick}
 				/>
 			</S.PageTitle>
 		</ThemeProvider>

@@ -1,0 +1,6 @@
+query getBlocksMeta {
+	blocksMeta @client {
+		id
+		type
+	}
+}
