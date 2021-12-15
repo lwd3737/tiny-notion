@@ -1,3 +1,4 @@
+import { MouseEvent } from "react";
 import styled from "styled-components";
 import defaultPaletteTheme from "styles/themes/palette";
 import { convertColorToString } from "utils/themeUtils";

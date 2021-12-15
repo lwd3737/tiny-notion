@@ -12,6 +12,7 @@ const PageContent = ({ isFocused }: PageContentProps): JSX.Element => {
 		blocksMeta,
 		blocksContent,
 		focusedBlock,
+		onContentClick,
 		onBlockClick,
 		onBlockKeyDown,
 		onBlockKeyUp,
@@ -53,7 +54,7 @@ const PageContent = ({ isFocused }: PageContentProps): JSX.Element => {
 	}, []);
 
 	return (
-		<S.PageContent>
+		<S.PageContent onClick={onContentClick}>
 			{blocksMeta ? blocksMeta.map(renderBlock) : renderEmptyTemplate()}
 		</S.PageContent>
 	);

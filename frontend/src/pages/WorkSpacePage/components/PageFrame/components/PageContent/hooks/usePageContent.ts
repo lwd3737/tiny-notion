@@ -1,11 +1,16 @@
 import { v4 as uuid } from "uuid";
 import {
 	IBlockType,
+	ISection,
 	useGetBlocksMetaQuery,
 	useGetFocusedBlockQuery,
 } from "generated/graphql";
-import { useCallback, useEffect } from "react";
-import { addBlock, setFocusedBlock } from "operations/mutations";
+import { MouseEvent, useCallback, useEffect } from "react";
+import {
+	addBlock,
+	setFocusedBlock,
+	setFocusedSection,
+} from "operations/mutations";
 import { useGetBlocksContent } from "operations/queries";
 import {
 	useBlockClick,
@@ -15,14 +20,35 @@ import {
 
 export const usePageContent = (isFocused: boolean) => {
 	const { data: blocksMetaData } = useGetBlocksMetaQuery();
-	const blocksMeta = blocksMetaData?.blocksMeta ?? null;
+	const blocksMeta = blocksMetaData?.blocksMeta;
 
 	const blocksContent = useGetBlocksContent();
 
 	const { data: focusedBlockData } = useGetFocusedBlockQuery();
 	const focusedBlock = focusedBlockData?.focusedBlock ?? null;
 
-	const onContentClick = useCallback(() => {}, []);
+	const onContentClick = useCallback(
+		(e: MouseEvent) => {
+			setFocusedSection(ISection.Content);
+
+			if (blocksMeta) {
+				const firstBlock = blocksMeta[0];
+
+				setFocusedBlock({
+					id: firstBlock.id,
+					index: 0,
+				});
+			} else {
+				addBlock({
+					id: uuid(),
+					type: IBlockType.Text,
+					content: "",
+					index: 0,
+				});
+			}
+		},
+		[blocksMeta],
+	);
 
 	const onBlockKeyUp = useBlockKeyUp({
 		blocksMeta,
@@ -39,13 +65,6 @@ export const usePageContent = (isFocused: boolean) => {
 	useEffect(() => {
 		const onContentFocus = () => {
 			if (!isFocused) return;
-
-			if (blocksMeta === null && blocksContent !== null) {
-				throw new Error("blocksContent must empty");
-			}
-			if (blocksMeta !== null && blocksContent === null) {
-				throw new Error("blocksMeta must empty");
-			}
 
 			if (blocksMeta === null && blocksContent === null) {
 				const id = uuid();
@@ -76,6 +95,7 @@ export const usePageContent = (isFocused: boolean) => {
 		blocksMeta,
 		blocksContent,
 		focusedBlock,
+		onContentClick,
 		onBlockClick,
 		onBlockKeyDown,
 		onBlockKeyUp,
