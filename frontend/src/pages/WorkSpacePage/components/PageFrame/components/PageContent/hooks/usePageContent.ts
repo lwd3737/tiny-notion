@@ -38,14 +38,7 @@ export const usePageContent = (isFocused: boolean) => {
 		(e: MouseEvent) => {
 			setFocusedSection(ISection.Content);
 
-			if (blocksMeta) {
-				const firstBlock = blocksMeta[0];
-
-				setFocusedBlock({
-					id: firstBlock.id,
-					index: 0,
-				});
-			} else {
+			if (!blocksMeta) {
 				addBlock({
 					id: uuid(),
 					type: IBlockType.Text,
@@ -72,7 +65,6 @@ export const usePageContent = (isFocused: boolean) => {
 	useEffect(() => {
 		const onContentFocus = () => {
 			if (!isFocused) return;
-
 			if (blocksMeta === null && blocksContent === null) {
 				const id = uuid();
 

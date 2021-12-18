@@ -37,7 +37,9 @@ const PageContent = ({ isFocused }: PageContentProps): JSX.Element => {
 						value={content}
 						onKeyUp={onBlockKeyUp}
 						onKeyDown={onBlockKeyDown}
-						onClick={(e) => onBlockClick(e, { id, index })}
+						onClick={(e) => {
+							onBlockClick(e, { id, index });
+						}}
 					/>
 				);
 			}

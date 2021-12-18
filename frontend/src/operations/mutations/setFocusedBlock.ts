@@ -5,8 +5,9 @@ export const createSetFocusedBlock = (
 	focusedBlockVar: ReactiveVar<FocusedBlock>,
 ) => {
 	return (focusedBlock: { id: string; index: number } | null) => {
-		if (focusedBlock) {
-			focusedBlockVar(focusedBlock);
-		}
+		console.log("focused: ", focusedBlock);
+
+		focusedBlockVar(focusedBlock);
+		console.trace("focused var: ", focusedBlockVar());
 	};
 };
