@@ -1,6 +1,6 @@
 export type BlockContent = {
 	id: string;
-	content: any;
+	content: string;
 };
 
 export type BlocksContent = {
