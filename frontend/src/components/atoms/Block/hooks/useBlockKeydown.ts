@@ -25,15 +25,10 @@ export const useBlockKeyDown = ({
 			if (!blocksMeta) return;
 			if (!blocksContent) return;
 
-			const blockMeta = blocksMeta[focusedBlock.index];
-			const $contentEditableLeaf = getBlockContentEditableLeafById(
-				blockMeta.id,
-			);
+			const updateFocusedBlockContent = ($el: HTMLElement | null) => {
+				if (!$el) return;
 
-			const updateFocusedBlockContent = () => {
-				if (!$contentEditableLeaf) return;
-
-				const content = $contentEditableLeaf.innerHTML;
+				const content = $el.innerHTML;
 
 				updateBlockContent({
 					id: blockMeta.id,
@@ -41,17 +36,14 @@ export const useBlockKeyDown = ({
 				});
 			};
 
-			const createNextBlockThenUpdateContent = () => {
-				if (!$contentEditableLeaf) return;
+			const createNextBlockThenUpdateContent = ($el: HTMLElement | null) => {
+				if (!$el) return;
 
 				const selection = document.getSelection();
 
 				if (!selection) return;
 
-				selection.extend(
-					$contentEditableLeaf,
-					$contentEditableLeaf.childNodes.length,
-				);
+				selection.extend($el, $el.childNodes.length);
 
 				const range = selection.getRangeAt(0);
 				const $content = range.extractContents().firstChild as Node;
@@ -70,8 +62,13 @@ export const useBlockKeyDown = ({
 				});
 			};
 
-			updateFocusedBlockContent();
-			createNextBlockThenUpdateContent();
+			const blockMeta = blocksMeta[focusedBlock.index];
+			const $contentEditableLeaf = getBlockContentEditableLeafById(
+				blockMeta.id,
+			);
+
+			updateFocusedBlockContent($contentEditableLeaf);
+			createNextBlockThenUpdateContent($contentEditableLeaf);
 		},
 		[focusedBlock, blocksMeta, blocksContent],
 	);

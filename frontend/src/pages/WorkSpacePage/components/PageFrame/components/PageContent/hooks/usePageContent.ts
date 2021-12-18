@@ -27,6 +27,13 @@ export const usePageContent = (isFocused: boolean) => {
 	const { data: focusedBlockData } = useGetFocusedBlockQuery();
 	const focusedBlock = focusedBlockData?.focusedBlock ?? null;
 
+	console.log("blocksMeta: ");
+	console.log(blocksMeta);
+	console.log("blocksContent: ");
+	console.log(blocksContent);
+	console.log("focusedBlock: ");
+	console.log(focusedBlock);
+
 	const onContentClick = useCallback(
 		(e: MouseEvent) => {
 			setFocusedSection(ISection.Content);

@@ -37,7 +37,8 @@ export const createAddBlock = ({
 			]);
 		} else {
 			blocksMeta.splice(index, 0, { id, type });
-			blocksMetaVar(blocksMeta);
+			console.log("creating block meta: ", blocksMeta);
+			blocksMetaVar([...blocksMeta]);
 		}
 
 		//add block to blocksContent

@@ -28,7 +28,7 @@ const typePolicies = {
 					return blocksMetaVar();
 				},
 			},
-			focusedBlockId: {
+			focusedBlock: {
 				read() {
 					return focusedBlockVar();
 				},
