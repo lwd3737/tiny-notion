@@ -11,6 +11,7 @@ import {
 } from "operations/mutations";
 import { TextInputElement } from "components/atoms/TextInput";
 import { sanitizeHTML } from "components/atoms/TextInput/utils";
+import { getBlockContentEditableLeafById } from "utils/dom";
 
 export const useBlockKeyUp = ({
 	blocksMeta,
@@ -38,18 +39,26 @@ export const useBlockKeyUp = ({
 		[blocksMeta, blocksContent, focusedBlock],
 	);
 
-	const onBlockEnterKeyUp = useCallback((e: KeyboardEvent) => {
-		// if (focusedBlockIndex === null) return;
-		// if (blocksMeta === null) return;
-		// const $el = e.target as TextInputElement;
-		//const html = sanitizeHTML($el.innerHTML);
-		//const nextFocusedBlockIndex = focusedBlockIndex + 1;
-		// setBlocksContent({
-		// 	...blocksContent,
-		// 	[focusedBlockIndex]: html,
-		// });
-		//createBlock("text", blocksMeta, nextFocusedBlockIndex);
-	}, []);
+	const onBlockEnterKeyUp = useCallback(
+		(e: KeyboardEvent) => {
+			if (!focusedBlock) return;
+			if (!blocksContent) return;
+
+			const updateNextBlockContent = () => {
+				const blockContent = blocksContent[focusedBlock.id];
+				const $contentEditableLeaf = getBlockContentEditableLeafById(
+					focusedBlock.id,
+				);
+
+				if (!$contentEditableLeaf) return;
+
+				$contentEditableLeaf.innerHTML = blockContent.content;
+			};
+
+			updateNextBlockContent();
+		},
+		[focusedBlock, blocksContent],
+	);
 
 	const onBlockBackspaceKeyUp = useCallback(
 		(e: KeyboardEvent) => {
