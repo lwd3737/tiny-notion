@@ -12,6 +12,7 @@ import {
 import { TextInputElement } from "components/atoms/TextInput";
 import { sanitizeHTML } from "components/atoms/TextInput/utils";
 import { getBlockContentEditableLeafById } from "utils/dom";
+import { of } from "zen-observable";
 
 export const useBlockKeyUp = ({
 	blocksMeta,
@@ -46,12 +47,15 @@ export const useBlockKeyUp = ({
 
 			const updateNextBlockContent = () => {
 				const blockContent = blocksContent[focusedBlock.id];
+
+				if (!blockContent) return;
+				if (!blockContent.content) return;
+
 				const $contentEditableLeaf = getBlockContentEditableLeafById(
 					focusedBlock.id,
 				);
 
 				if (!$contentEditableLeaf) return;
-
 				$contentEditableLeaf.innerHTML = blockContent.content;
 			};
 
@@ -66,25 +70,34 @@ export const useBlockKeyUp = ({
 			if (!blocksContent) return;
 			if (!focusedBlock) return;
 
-			const isContentEmpty = () => {
-				const blockContent = blocksContent[focusedBlock.id];
+			const isCursorPosAtFirst = () => {
+				const selection = document.getSelection();
 
-				if (blockContent === undefined) return false;
+				if (!selection) return false;
+				if (!selection.isCollapsed) return false;
 
-				const { type } = blocksMeta[focusedBlock.index];
-
-				if (type === IBlockType.Text) {
-					const content = blockContent.content as string;
-
-					return content.length === 0 ? true : false;
-				}
-
-				return false;
+				return selection.anchorOffset === 0 ? true : false;
 			};
+
+			// const isContentEmpty = () => {
+			// 	const blockContent = blocksContent[focusedBlock.id];
+
+			// 	if (blockContent === undefined) return false;
+
+			// 	const { type } = blocksMeta[focusedBlock.index];
+
+			// 	if (type === IBlockType.Text) {
+			// 		const content = blockContent.content as string;
+
+			// 		return content.length === 0 ? true : false;
+			// 	}
+
+			// 	return false;
+			// };
 
 			onTextBlockInput(e);
 
-			if (isContentEmpty()) {
+			if (isCursorPosAtFirst()) {
 				deleteBlock(focusedBlock);
 			}
 		},
