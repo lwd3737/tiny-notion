@@ -1,18 +1,16 @@
 import { KeyboardEvent, useCallback } from "react";
-import { IBlockType, ISection } from "generated/graphql";
+import { ISection } from "generated/graphql";
 import { BlocksContent } from "models/BlocksContent";
 import { BlocksMeta } from "models/BlocksMeta";
 import { FocusedBlock } from "models/FocusedBlock";
 import {
 	updateBlockContent,
-	deleteBlock,
 	setFocusedBlock,
 	setFocusedSection,
 } from "operations/mutations";
 import { TextInputElement } from "components/atoms/TextInput";
 import { sanitizeHTML } from "components/atoms/TextInput/utils";
 import { getBlockContentEditableLeafById } from "utils/dom";
-import { of } from "zen-observable";
 
 export const useBlockKeyUp = ({
 	blocksMeta,
@@ -31,9 +29,10 @@ export const useBlockKeyUp = ({
 
 			const $el = e.target as TextInputElement;
 			const html = sanitizeHTML($el.innerHTML);
+			console.log("$html: ", html);
 
 			updateBlockContent({
-				id: blocksMeta[focusedBlock.index].id,
+				id: focusedBlock.id,
 				content: html,
 			});
 		},
@@ -66,42 +65,9 @@ export const useBlockKeyUp = ({
 
 	const onBlockBackspaceKeyUp = useCallback(
 		(e: KeyboardEvent) => {
-			if (!blocksMeta) return;
-			if (!blocksContent) return;
-			if (!focusedBlock) return;
-
-			const isCursorPosAtFirst = () => {
-				const selection = document.getSelection();
-
-				if (!selection) return false;
-				if (!selection.isCollapsed) return false;
-
-				return selection.anchorOffset === 0 ? true : false;
-			};
-
-			// const isContentEmpty = () => {
-			// 	const blockContent = blocksContent[focusedBlock.id];
-
-			// 	if (blockContent === undefined) return false;
-
-			// 	const { type } = blocksMeta[focusedBlock.index];
-
-			// 	if (type === IBlockType.Text) {
-			// 		const content = blockContent.content as string;
-
-			// 		return content.length === 0 ? true : false;
-			// 	}
-
-			// 	return false;
-			// };
-
 			onTextBlockInput(e);
-
-			if (isCursorPosAtFirst()) {
-				deleteBlock(focusedBlock);
-			}
 		},
-		[focusedBlock, blocksMeta, blocksContent, onTextBlockInput],
+		[onTextBlockInput],
 	);
 
 	const onBlockArrowDownKeyUp = useCallback(() => {

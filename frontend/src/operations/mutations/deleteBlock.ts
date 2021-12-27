@@ -25,7 +25,7 @@ export const createDeleteBlock = ({
 		if (blocksMeta.length === 0) {
 			blocksMetaVar(null);
 		} else {
-			blocksMetaVar(blocksMeta);
+			blocksMetaVar([...blocksMeta]);
 		}
 
 		//delete block from blocksContent

@@ -2,9 +2,13 @@ import { IBlockType } from "generated/graphql";
 import { BlocksContent } from "models/BlocksContent";
 import { BlocksMeta } from "models/BlocksMeta";
 import { FocusedBlock } from "models/FocusedBlock";
-import { addBlock, updateBlockContent } from "operations/mutations";
+import {
+	addBlock,
+	deleteBlock,
+	updateBlockContent,
+} from "operations/mutations";
 import { KeyboardEvent, useCallback } from "react";
-import { getBlockContentEditableLeafById } from "utils/dom";
+import { extractContentsAfterCusor, updateBlockContentById } from "utils/dom";
 import { v4 as uuid } from "uuid";
 
 export const useBlockKeyDown = ({
@@ -21,38 +25,18 @@ export const useBlockKeyDown = ({
 			/*
 				This event is aplied to DOM at first, then it is passed to react state
 			*/
+			e.preventDefault();
+
 			if (!focusedBlock) return;
 			if (!blocksMeta) return;
 			if (!blocksContent) return;
 
-			const updateFocusedBlockContent = ($el: HTMLElement | null) => {
-				if (!$el) return;
+			const createNextBlockThenUpdateContent = () => {
+				const blockMeta = blocksMeta[focusedBlock.index];
 
-				const content = $el.innerHTML;
+				updateBlockContentById(blockMeta.id);
 
-				updateBlockContent({
-					id: blockMeta.id,
-					content,
-				});
-			};
-
-			const createNextBlockThenUpdateContent = ($el: HTMLElement | null) => {
-				if (!$el) return;
-
-				const selection = document.getSelection();
-
-				if (!selection) return;
-
-				selection.extend($el, $el.childNodes.length);
-
-				const range = selection.getRangeAt(0);
-				const $content = range.extractContents().firstChild as Node;
-				let content;
-
-				if ($content && $content.nodeType === Node.TEXT_NODE) {
-					const $textNode = $content as Text;
-					content = $textNode.data;
-				}
+				const content = extractContentsAfterCusor(blockMeta.id);
 
 				addBlock({
 					id: uuid(),
@@ -62,15 +46,53 @@ export const useBlockKeyDown = ({
 				});
 			};
 
-			const blockMeta = blocksMeta[focusedBlock.index];
-			const $contentEditableLeaf = getBlockContentEditableLeafById(
-				blockMeta.id,
-			);
-
-			updateFocusedBlockContent($contentEditableLeaf);
-			createNextBlockThenUpdateContent($contentEditableLeaf);
+			createNextBlockThenUpdateContent();
 		},
 		[focusedBlock, blocksMeta, blocksContent],
+	);
+
+	const onBlockBackspaceKeyDown = useCallback(
+		(e: KeyboardEvent) => {
+			if (!blocksMeta) return;
+			if (!blocksContent) return;
+			if (!focusedBlock) return;
+
+			const isCursorPosAtFirst = () => {
+				const selection = document.getSelection();
+
+				if (!selection) return false;
+				if (!selection.isCollapsed) return false;
+
+				return selection.anchorOffset === 0 ? true : false;
+			};
+
+			const updatePrevBlockContent = (newContent: any) => {
+				const prevIndex = focusedBlock.index - 1;
+
+				if (prevIndex < 0) {
+				} else {
+					const prevBlockMeta = blocksMeta[prevIndex];
+					const prevContent = blocksContent[prevBlockMeta.id];
+					const content = prevContent.content + newContent;
+
+					updateBlockContent({
+						id: prevBlockMeta.id,
+						content,
+					});
+				}
+			};
+
+			if (isCursorPosAtFirst()) {
+				const content = extractContentsAfterCusor(focusedBlock.id);
+
+				if (content) {
+					updatePrevBlockContent(content);
+				}
+
+				deleteBlock(focusedBlock);
+			}
+		},
+		[blocksContent, blocksMeta, focusedBlock],
 	);
 
 	const onBlockKeyDown = useCallback(
@@ -83,9 +105,13 @@ export const useBlockKeyDown = ({
 				case "Enter":
 					onBlockEnterKeyDown(e);
 					break;
+				case "Backspace": {
+					onBlockBackspaceKeyDown(e);
+					break;
+				}
 			}
 		},
-		[onBlockEnterKeyDown],
+		[onBlockEnterKeyDown, onBlockBackspaceKeyDown],
 	);
 
 	return onBlockKeyDown;
