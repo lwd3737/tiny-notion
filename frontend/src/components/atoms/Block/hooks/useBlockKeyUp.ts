@@ -10,7 +10,10 @@ import {
 } from "operations/mutations";
 import { TextInputElement } from "components/atoms/TextInput";
 import { sanitizeHTML } from "components/atoms/TextInput/utils";
-import { getBlockContentEditableLeafById } from "utils/dom";
+import {
+	getBlockContentEditableLeafById,
+	updateBlockContentFromEl,
+} from "utils/dom";
 
 export const useBlockKeyUp = ({
 	blocksMeta,
@@ -42,6 +45,7 @@ export const useBlockKeyUp = ({
 		(e: KeyboardEvent) => {
 			if (!focusedBlock) return;
 			if (!blocksContent) return;
+			if (!blocksMeta) return;
 
 			const updateNextBlockContent = () => {
 				const blockContent = blocksContent[focusedBlock.id];
@@ -54,12 +58,16 @@ export const useBlockKeyUp = ({
 				);
 
 				if (!$contentEditableLeaf) return;
+
 				$contentEditableLeaf.innerHTML = blockContent.content;
 			};
 
+			const prevBlockId = blocksMeta[focusedBlock.index - 1].id;
+
+			updateBlockContentFromEl(prevBlockId);
 			updateNextBlockContent();
 		},
-		[focusedBlock, blocksContent],
+		[focusedBlock, blocksContent, blocksMeta],
 	);
 
 	const onBlockBackspaceKeyUp = useCallback(

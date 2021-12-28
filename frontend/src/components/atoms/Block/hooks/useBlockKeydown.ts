@@ -10,7 +10,7 @@ import {
 import { KeyboardEvent, useCallback } from "react";
 import {
 	extractContentsAfterCusor,
-	updateBlockContentById,
+	updateBlockContentFromEl,
 	updateBothBlockContentElAndState,
 	updateContentEditableEl,
 } from "utils/dom";
@@ -39,9 +39,7 @@ export const useBlockKeyDown = ({
 			const createNextBlockThenUpdateContent = () => {
 				const blockMeta = blocksMeta[focusedBlock.index];
 
-				updateBlockContentById(blockMeta.id);
-
-				const content = extractContentsAfterCusor(blockMeta.id);
+				const content = extractContentsAfterCusor(blockMeta.id) ?? "";
 
 				addBlock({
 					id: uuid(),
