@@ -8,7 +8,12 @@ import {
 	updateBlockContent,
 } from "operations/mutations";
 import { KeyboardEvent, useCallback } from "react";
-import { extractContentsAfterCusor, updateBlockContentById } from "utils/dom";
+import {
+	extractContentsAfterCusor,
+	updateBlockContentById,
+	updateBothBlockContentElAndState,
+	updateContentEditableEl,
+} from "utils/dom";
 import { v4 as uuid } from "uuid";
 
 export const useBlockKeyDown = ({
@@ -75,10 +80,8 @@ export const useBlockKeyDown = ({
 					const prevContent = blocksContent[prevBlockMeta.id];
 					const content = prevContent.content + newContent;
 
-					updateBlockContent({
-						id: prevBlockMeta.id,
-						content,
-					});
+					deleteBlock(focusedBlock);
+					updateBothBlockContentElAndState(prevBlockMeta.id, content);
 				}
 			};
 
@@ -88,8 +91,6 @@ export const useBlockKeyDown = ({
 				if (content) {
 					updatePrevBlockContent(content);
 				}
-
-				deleteBlock(focusedBlock);
 			}
 		},
 		[blocksContent, blocksMeta, focusedBlock],

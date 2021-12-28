@@ -39,6 +39,11 @@ export const updateBlockContentById = (id: string) => {
 	});
 };
 
+export const updateBothBlockContentElAndState = (id: string, content: any) => {
+	updateContentEditableEl(id, content);
+	updateBlockContentById(id);
+};
+
 export const extractContentsAfterCusor = (id: string) => {
 	const $contentEditableLeaf = getBlockContentEditableLeafById(id);
 

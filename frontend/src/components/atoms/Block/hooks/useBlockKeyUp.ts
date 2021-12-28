@@ -29,7 +29,6 @@ export const useBlockKeyUp = ({
 
 			const $el = e.target as TextInputElement;
 			const html = sanitizeHTML($el.innerHTML);
-			console.log("$html: ", html);
 
 			updateBlockContent({
 				id: focusedBlock.id,
