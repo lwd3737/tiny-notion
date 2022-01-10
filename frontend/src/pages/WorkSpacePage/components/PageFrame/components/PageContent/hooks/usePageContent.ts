@@ -12,11 +12,7 @@ import {
 	setFocusedSection,
 } from "operations/mutations";
 import { useGetBlocksContent } from "operations/queries";
-import {
-	useBlockClick,
-	useBlockKeyDown,
-	useBlockKeyUp,
-} from "components/atoms/Block";
+import { useBlockClick, useBlockKeyDown } from "components/atoms/Block";
 
 export const usePageContent = (isFocused: boolean) => {
 	const { data: blocksMetaData } = useGetBlocksMetaQuery();
@@ -42,7 +38,9 @@ export const usePageContent = (isFocused: boolean) => {
 				addBlock({
 					id: uuid(),
 					type: IBlockType.Text,
-					content: "",
+					content: {
+						value: "",
+					},
 					index: 0,
 				});
 			}
@@ -50,11 +48,6 @@ export const usePageContent = (isFocused: boolean) => {
 		[blocksMeta],
 	);
 
-	const onBlockKeyUp = useBlockKeyUp({
-		blocksMeta,
-		blocksContent,
-		focusedBlock,
-	});
 	const onBlockKeyDown = useBlockKeyDown({
 		blocksMeta,
 		blocksContent,
@@ -65,13 +58,15 @@ export const usePageContent = (isFocused: boolean) => {
 	useEffect(() => {
 		const onContentFocus = () => {
 			if (!isFocused) return;
-			if (blocksMeta === null && blocksContent === null) {
+			if (blocksMeta === null) {
 				const id = uuid();
 
 				addBlock({
 					id,
 					type: IBlockType.Text,
-					content: "",
+					content: {
+						value: "",
+					},
 					index: 0,
 				});
 			}
@@ -97,6 +92,5 @@ export const usePageContent = (isFocused: boolean) => {
 		onContentClick,
 		onBlockClick,
 		onBlockKeyDown,
-		onBlockKeyUp,
 	};
 };

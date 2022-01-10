@@ -1,10 +1,12 @@
 import { updateBlockContent } from "operations/mutations";
 
-export const getBlockElById = (id: string) => {
+export const getBlockElById = (id: string): Element | null => {
 	return document.querySelector(`.block[data-block-id="${id}"]`);
 };
 
-export const getBlockContentEditableLeafById = (id: string) => {
+export const getBlockContentEditableLeafById = (
+	id: string,
+): HTMLElement | null => {
 	const $block = getBlockElById(id);
 
 	if ($block === null) return null;
@@ -18,7 +20,7 @@ export const getBlockContentEditableLeafById = (id: string) => {
 	return $contentEditablLeaf as HTMLElement;
 };
 
-export const updateContentEditableEl = (id: string, content: any) => {
+export const updateContentEditableEl = (id: string, content: any): void => {
 	const $contentEditableLeaf = getBlockContentEditableLeafById(id);
 
 	if ($contentEditableLeaf === null) return;
@@ -26,32 +28,30 @@ export const updateContentEditableEl = (id: string, content: any) => {
 	$contentEditableLeaf.innerHTML = content;
 };
 
-export const updateBlockContentFromEl = (id: string) => {
+export const getContentEditableContent = (id: string): string | null => {
 	const $contentEditableLeaf = getBlockContentEditableLeafById(id);
 
-	if (!$contentEditableLeaf) return;
+	if (!$contentEditableLeaf) return null;
 
-	const content = $contentEditableLeaf.innerHTML;
-
-	updateBlockContent({
-		id: id,
-		content,
-	});
+	return $contentEditableLeaf.innerHTML;
 };
 
-export const updateBothBlockContentElAndState = (id: string, content: any) => {
-	updateContentEditableEl(id, content);
-	updateBlockContentFromEl(id);
+export const getRange = (): Range | null => {
+	const selection = document.getSelection();
+
+	if (!selection) return null;
+
+	return selection.getRangeAt(0) ?? null;
 };
 
-export const extractContentsAfterCusor = (id: string) => {
+export const extractContentsAfterCusor = (id: string): string | null => {
 	const $contentEditableLeaf = getBlockContentEditableLeafById(id);
 
-	if (!$contentEditableLeaf) return;
+	if (!$contentEditableLeaf) return null;
 
 	const selection = document.getSelection();
 
-	if (!selection) return;
+	if (!selection) return null;
 
 	selection.extend(
 		$contentEditableLeaf,
@@ -68,5 +68,74 @@ export const extractContentsAfterCusor = (id: string) => {
 		content = $textNode.data;
 	}
 
-	return content;
+	return content ?? null;
+};
+
+export const searchEndNode = (node: Text | HTMLElement): Text | null => {
+	if (node.nodeType === Node.TEXT_NODE) {
+		return node as Text;
+	} else if (node.nodeType === Node.ELEMENT_NODE) {
+		const $el = node as HTMLElement;
+
+		return searchEndNode($el.lastChild as Text | HTMLElement);
+	}
+
+	return null;
+};
+
+export const getEndOfContentEditableLeaf = (
+	id: string,
+): { node: Text | HTMLElement; offset: number } | null => {
+	const $contentEditableLeaf = getBlockContentEditableLeafById(id);
+
+	if (!$contentEditableLeaf) return null;
+
+	//TODO 마지막 노드가 엘리먼트 노드일 때 offset 추가
+	const focusNode = $contentEditableLeaf.lastChild as Text | HTMLElement;
+
+	if (!focusNode) return null;
+
+	const $textNode = searchEndNode(focusNode);
+
+	if (!$textNode) return null;
+
+	return {
+		node: $textNode,
+		offset: $textNode.data.length,
+	};
+};
+
+export const placeCursorAtOffsetOfContentEditable = (
+	node: Node,
+	offset: number,
+): void => {
+	const selection = document.getSelection();
+
+	if (!selection) return;
+
+	selection.setPosition(node, offset);
+};
+
+export const placeCursorAtEndOfContentEditable = (id: string): void => {
+	const $contentEdtitableLeafEl = getBlockContentEditableLeafById(id);
+
+	if (!$contentEdtitableLeafEl) return;
+
+	const range = getRange();
+
+	if (!range) return;
+
+	range.setEnd(
+		$contentEdtitableLeafEl,
+		$contentEdtitableLeafEl?.childNodes.length,
+	);
+};
+
+export const isCursorPosAtFirst = (): boolean => {
+	const selection = document.getSelection();
+
+	if (!selection) return false;
+	if (!selection.isCollapsed) return false;
+
+	return selection.anchorOffset === 0 ? true : false;
 };

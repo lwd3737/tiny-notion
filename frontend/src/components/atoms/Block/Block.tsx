@@ -1,7 +1,7 @@
 import * as S from "./styled";
 import { BlockProps } from "./types";
 
-const BlockContainer = ({ children, id }: BlockProps): JSX.Element => {
+const Block = ({ children, id }: BlockProps): JSX.Element => {
 	return (
 		<S.Block className="block" data-block-id={id}>
 			{children}
@@ -9,4 +9,4 @@ const BlockContainer = ({ children, id }: BlockProps): JSX.Element => {
 	);
 };
 
-export default BlockContainer;
+export default Block;

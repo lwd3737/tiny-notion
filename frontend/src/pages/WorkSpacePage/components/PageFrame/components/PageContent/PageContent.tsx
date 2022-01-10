@@ -6,6 +6,7 @@ import * as S from "./styled";
 import { IBlockType } from "generated/graphql";
 import { usePageContent } from "./hooks";
 import { BlockMeta } from "models/BlocksMeta";
+import { TextBlockContent } from "models/BlocksContent";
 
 const PageContent = ({ isFocused }: PageContentProps): JSX.Element => {
 	const {
@@ -15,7 +16,6 @@ const PageContent = ({ isFocused }: PageContentProps): JSX.Element => {
 		onContentClick,
 		onBlockClick,
 		onBlockKeyDown,
-		onBlockKeyUp,
 	} = usePageContent(isFocused);
 
 	const renderBlock = useCallback(
@@ -27,15 +27,14 @@ const PageContent = ({ isFocused }: PageContentProps): JSX.Element => {
 			const blockContent = blocksContent[id];
 
 			if (blockMeta.type === IBlockType.Text) {
-				const content = (blockContent?.content as string) ?? null;
+				const content = (blockContent?.content as TextBlockContent) ?? null;
 
 				return (
 					<TextBlock
+						key={id}
 						id={id}
 						isFocused={focusedBlock?.id === id}
-						key={id}
-						value={content}
-						onKeyUp={onBlockKeyUp}
+						value={content.value}
 						onKeyDown={onBlockKeyDown}
 						onClick={(e) => {
 							onBlockClick(e, { id, index });
@@ -46,7 +45,7 @@ const PageContent = ({ isFocused }: PageContentProps): JSX.Element => {
 
 			return null;
 		},
-		[blocksContent, focusedBlock, onBlockKeyUp, onBlockKeyDown, onBlockClick],
+		[blocksContent, focusedBlock, onBlockKeyDown, onBlockClick],
 	);
 
 	const renderEmptyTemplate = useCallback(() => {

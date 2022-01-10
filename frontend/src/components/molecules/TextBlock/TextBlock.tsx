@@ -7,7 +7,6 @@ const TextBlock = ({
 	id,
 	value,
 	isFocused,
-	onKeyUp,
 	onKeyDown,
 	onFocus,
 	onClick,
@@ -18,7 +17,7 @@ const TextBlock = ({
 				isFocused={isFocused}
 				value={value}
 				placeholder={`명령어 사용 시 "/"를 입력하세요`}
-				onKeyUp={onKeyUp}
+				contentEditable
 				onKeyDown={onKeyDown}
 				onFocus={onFocus}
 				onClick={onClick}

@@ -1,6 +1,6 @@
 import { ReactiveVar } from "@apollo/client";
 import { IBlockType } from "generated/graphql";
-import { BlocksContent } from "models/BlocksContent";
+import { BlockContent, BlocksContent } from "models/BlocksContent";
 import { BlocksMeta } from "models/BlocksMeta";
 import { FocusedBlock } from "models/FocusedBlock";
 import { updateContentEditableEl } from "utils/dom";
@@ -22,7 +22,7 @@ export const createAddBlock = ({
 	}: {
 		id: string;
 		type: IBlockType;
-		content: any;
+		content: BlockContent["content"];
 		index: number;
 	}) => {
 		//add block to blocksMeta
